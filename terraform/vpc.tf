@@ -31,28 +31,27 @@ resource "aws_internet_gateway" "igw" {
 # Subnets
 # -----------------------------
 resource "aws_subnet" "public" {
-  for_each = toset(range(length(var.public_subnet_cidrs)))
-  vpc_id            = aws_vpc.this.id
-  cidr_block        = var.public_subnet_cidrs[each.key]
-  availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[each.key] : data.aws_availability_zones.available.names[each.key]
+  count = length(var.public_subnet_cidrs)
+  vpc_id = aws_vpc.this.id
+  cidr_block = var.public_subnet_cidrs[count.index]
+  availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[count.index] : data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
-
-  tags = { 
-    Name = "${var.project}-public-${each.key}"
+  tags = {
+    Name = "${var.project}-public-${count.index}"
   }
 }
 
 resource "aws_subnet" "private" {
-  for_each = toset(range(length(var.private_subnet_cidrs)))
-  vpc_id            = aws_vpc.this.id
-  cidr_block        = var.private_subnet_cidrs[each.key]
-  availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[each.key] : data.aws_availability_zones.available.names[each.key]
+  count = length(var.private_subnet_cidrs)
+  vpc_id = aws_vpc.this.id
+  cidr_block = var.private_subnet_cidrs[count.index]
+  availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[count.index] : data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = false
-
-  tags = { 
-    Name = "${var.project}-private-${each.key}" 
+  tags = {
+    Name = "${var.project}-private-${count.index}"
   }
 }
+
 
 # -----------------------------
 # NAT Gateway
