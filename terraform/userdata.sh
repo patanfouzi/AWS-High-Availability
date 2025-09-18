@@ -1,17 +1,14 @@
 #!/bin/bash
 set -e
 export DEBIAN_FRONTEND=noninteractive
-
 apt-get update -y
 apt-get upgrade -y
 apt-get install -y nginx
 systemctl enable nginx
 systemctl start nginx
-
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
 dpkg -i /tmp/amazon-cloudwatch-agent.deb || true
 apt-get -f install -y || true
-
 cat <<'JSON' >/opt/aws/amazon-cloudwatch-agent/bin/config.json
 {"agent":{"metrics_collection_interval":60,"logfile":"/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"},
 "metrics":{"metrics_collected":{
@@ -23,5 +20,4 @@ cat <<'JSON' >/opt/aws/amazon-cloudwatch-agent/bin/config.json
 "disk":{"measurement":[{"name":"used_percent","unit":"Percent"}],"metrics_collection_interval":60,"resources":["*"]}
 }}}
 JSON
-
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s || true
