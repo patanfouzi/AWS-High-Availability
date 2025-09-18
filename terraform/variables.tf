@@ -1,9 +1,20 @@
-variable "aws_region" { type = string; default = "us-east-1" }
-variable "project"    { type = string; default = "app-prod" }
-variable "owner"      { type = string; default = "devops" }
+variable "aws_region" { 
+  type = string
+  default = "us-east-1" 
+}
+variable "project" {
+  type = string
+  default = "app-prod" 
+}
+variable "owner"  { 
+  type = string
+  default = "devops"
+}
 
 # Existing instance to create AMI from
-variable "source_instance_id" { type = string }
+variable "source_instance_id" { 
+  type = string 
+}
 
 # AZs (optional override)
 variable "availability_zones" { 
