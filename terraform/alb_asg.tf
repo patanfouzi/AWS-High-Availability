@@ -72,13 +72,13 @@ resource "aws_lb_listener" "https" {
 # Auto Scaling Group
 # -----------------------------
 resource "aws_autoscaling_group" "asg" {
-  name                = "myapp-asg"
-  desired_capacity    = var.desired_capacity
-  min_size            = var.min_size
-  max_size            = var.max_size
-  vpc_zone_identifier = [for s in aws_subnet.private : s.id]
-  health_check_type   = "ELB"
-  health_check_grace_period = 180
+  name                       = "${var.project}-asg"
+  desired_capacity           = var.desired_capacity
+  min_size                   = var.min_size
+  max_size                   = var.max_size
+  vpc_zone_identifier        = [for s in aws_subnet.private : s.id]
+  health_check_type          = "ELB"
+  health_check_grace_period  = 180
 
   launch_template {
     id      = aws_launch_template.app_lt.id
@@ -89,7 +89,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tag {
     key                 = "Name"
-    value               = "myapp-instance"
+    value               = "${var.project}-instance"
     propagate_at_launch = true
   }
 
