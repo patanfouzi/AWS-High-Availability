@@ -1,6 +1,6 @@
 resource "aws_launch_template" "app_lt" {
   name_prefix   = "${var.project}-lt-"
-  image_id      = var.ami_id
+  image_id = aws_ami_from_instance.from_instance.id
   instance_type = var.instance_type
   key_name      = var.key_name != "" ? var.key_name : null
 
