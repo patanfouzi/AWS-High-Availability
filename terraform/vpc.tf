@@ -9,7 +9,9 @@ resource "aws_vpc" "this" {
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.this.id
-  tags = { Name = "${var.project}-igw" }
+  tags = {
+    Name = "${var.project}-igw" 
+  }
 }
 
 resource "aws_subnet" "public" {
@@ -18,7 +20,9 @@ resource "aws_subnet" "public" {
   cidr_block        = var.public_subnet_cidrs[each.key]
   availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[each.key] : data.aws_availability_zones.available.names[each.key]
   map_public_ip_on_launch = true
-  tags = { Name = "${var.project}-public-${each.key}" }
+  tags = { 
+    Name = "${var.project}-public-${each.key}"
+  }
 }
 
 resource "aws_subnet" "private" {
@@ -27,17 +31,23 @@ resource "aws_subnet" "private" {
   cidr_block        = var.private_subnet_cidrs[each.key]
   availability_zone = length(var.availability_zones) > 0 ? var.availability_zones[each.key] : data.aws_availability_zones.available.names[each.key]
   map_public_ip_on_launch = false
-  tags = { Name = "${var.project}-private-${each.key}" }
+  tags = { 
+    Name = "${var.project}-private-${each.key}" 
+  }
 }
 
 # EIP + NAT (one NAT in public[0]; HA NAT can be more complex)
-resource "aws_eip" "nat" { vpc = true }
+resource "aws_eip" "nat" {
+  vpc = true 
+}
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public["0"].id
   depends_on    = [aws_internet_gateway.igw]
-  tags = { Name = "${var.project}-nat" }
+  tags = { 
+    Name = "${var.project}-nat"
+  }
 }
 
 resource "aws_route_table" "public" {
@@ -46,7 +56,9 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
-  tags = { Name = "${var.project}-public-rt" }
+  tags = {
+    Name = "${var.project}-public-rt"
+  }
 }
 
 resource "aws_route_table_association" "public_assoc" {
@@ -59,8 +71,11 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.this.id
   route { 
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id }
-  tags = { Name = "${var.project}-private-rt" }
+    nat_gateway_id = aws_nat_gateway.nat.id 
+  }
+  tags = { 
+    Name = "${var.project}-private-rt" 
+  }
 }
 
 resource "aws_route_table_association" "private_assoc" {
