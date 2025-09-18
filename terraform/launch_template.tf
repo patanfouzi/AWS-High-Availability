@@ -1,29 +1,26 @@
-resource "aws_launch_template" "app_lt" {
+ resource "aws_launch_template" "app_lt" {
   name_prefix   = "${var.project}-lt-"
   image_id      = aws_ami_from_instance.from_instance.id
   instance_type = "t2.micro"
   key_name      = var.key_name
 
+  # Multi-line user_data script (no extra quotes, no $() unless needed)
   user_data = <<-EOF
     #!/bin/bash
     set -e
     export DEBIAN_FRONTEND=noninteractive
 
-    # Update
     apt-get update -y
     apt-get upgrade -y
 
-    # Install nginx
     apt-get install -y nginx
     systemctl enable nginx
     systemctl start nginx
 
-    # Download and install CloudWatch Agent (Ubuntu)
     wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
     dpkg -i /tmp/amazon-cloudwatch-agent.deb || true
     apt-get -f install -y || true
 
-    # CloudWatch Agent config
     cat <<'JSON' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
     {
       "agent": {
@@ -59,7 +56,6 @@ resource "aws_launch_template" "app_lt" {
     }
     JSON
 
-    # Start agent
     /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s || true
   EOF
 
