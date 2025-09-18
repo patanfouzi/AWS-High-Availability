@@ -1,0 +1,47 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      TERRAFORM_DIR: ${{ github.workspace }}/terraform
+
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform plan -var="key_name=${{ secrets.KEY_NAME }}"
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform apply -auto-approve -var="key_name=${{ secrets.KEY_NAME }}"
+
+      - name: Success Message
+        if: success()
+        run: echo "✅ Terraform workflow completed successfully!"
+
+      - name: Failure Message
+        if: failure()
+        run: echo "❌ Terraform workflow failed. Check logs above!"
