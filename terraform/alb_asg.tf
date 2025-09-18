@@ -94,7 +94,6 @@ resource "aws_autoscaling_policy" "cpu_target" {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
     target_value = 50.0
-    scale_in_cooldown  = 300
-    scale_out_cooldown = 300
+    estimated_instance_warmup = 300
   }
 }
