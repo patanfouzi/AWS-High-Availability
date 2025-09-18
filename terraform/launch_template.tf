@@ -4,7 +4,7 @@
   instance_type = "t2.micro"
   key_name      = var.key_name  
   vpc_security_group_ids = [aws_security_group.app_sg.id]
-  user_data = base64encode(file("${path.module}/userdata.sh"))
+  user_data = filebase64("${path.module}/userdata.sh")
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_profile.name
   }
