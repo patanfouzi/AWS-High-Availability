@@ -5,7 +5,7 @@
   key_name      = var.key_name
 
   # Multi-line user_data script (no extra quotes, no $() unless needed)
-  user_data = <<-EOF
+  user_data = base64encode( <<-EOF
     #!/bin/bash
     set -e
     export DEBIAN_FRONTEND=noninteractive
@@ -58,7 +58,7 @@
 
     /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s || true
   EOF
-
+)
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 
   iam_instance_profile {
