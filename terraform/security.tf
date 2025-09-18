@@ -15,7 +15,7 @@ resource "aws_security_group" "alb_sg" {
     description = "HTTPS"
     from_port = 443
     to_port = 443
-    protocol = "tcp"\
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     # if cert not provided, you can remove 443
   }
@@ -27,7 +27,9 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "${var.project}-alb-sg" }
+  tags = {
+    Name = "${var.project}-alb-sg"
+  }
 }
 
 # App / Instance SG (only allow from ALB)
@@ -61,5 +63,7 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "${var.project}-app-sg" }
+  tags = { 
+    Name = "${var.project}-app-sg" 
+  }
 }
