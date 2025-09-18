@@ -7,13 +7,6 @@ resource "aws_vpc" "this" {
   tags = { Name = "${var.project}-vpc", Owner = var.owner }
 }
 
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.this.id
-  tags = {
-    Name = "${var.project}-igw" 
-  }
-}
-
 resource "aws_subnet" "public" {
   for_each = toset(range(length(var.public_subnet_cidrs)))
   vpc_id            = aws_vpc.this.id
@@ -35,18 +28,19 @@ resource "aws_subnet" "private" {
     Name = "${var.project}-private-${each.key}" 
   }
 }
-
-# EIP + NAT (one NAT in public[0]; HA NAT can be more complex)
+# NAT Gateway EIP (correct for Terraform >= v4.x)
 resource "aws_eip" "nat" {
-  vpc = true 
+  depends_on = [aws_internet_gateway.igw]
+  tags = {
+    Name = "${var.project}-nat-eip"
+  }
 }
 
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public["0"].id
-  depends_on    = [aws_internet_gateway.igw]
-  tags = { 
-    Name = "${var.project}-nat"
+# Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.this.id
+  tags = {
+    Name = "${var.project}-igw"
   }
 }
 
