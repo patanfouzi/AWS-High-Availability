@@ -7,13 +7,16 @@
 
   user_data = base64encode(<<EOF
 #!/bin/bash
+# Log output
 exec > /var/log/user-data.log 2>&1
 set -x
-aws s3 cp s3://cloudwatch-script-bkt/userdata.sh /home/ubuntu/userdata.sh
-chmod +x /home/ubuntu/userdata.sh
-bash /home/ubuntu/userdata.sh
+# Download and run the script from S3
+aws s3 cp s3://cloudwatch-script-bkt/userdata.sh /tmp/userdata.sh
+chmod +x /tmp/userdata.sh
+bash /tmp/userdata.sh
 EOF
-  )
+)
+
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.ec2_profile.arn
