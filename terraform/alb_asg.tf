@@ -1,14 +1,21 @@
-# ALB
+# -----------------------------
+# Application Load Balancer
+# -----------------------------
 resource "aws_lb" "alb" {
   name               = "${var.project}-alb"
   internal           = false
   load_balancer_type = "application"
   subnets            = [for s in aws_subnet.public: s.id]
   security_groups    = [aws_security_group.alb_sg.id]
-  tags = { Name = "${var.project}-alb" }
+
+  tags = {
+    Name = "${var.project}-alb"
+  }
 }
 
+# -----------------------------
 # Target Group
+# -----------------------------
 resource "aws_lb_target_group" "tg" {
   name        = "${var.project}-tg"
   port        = 80
@@ -26,10 +33,14 @@ resource "aws_lb_target_group" "tg" {
     unhealthy_threshold = 3
   }
 
-  tags = { Name = "${var.project}-tg" }
+  tags = {
+    Name = "${var.project}-tg"
+  }
 }
 
-# Listener (HTTP)
+# -----------------------------
+# ALB Listener HTTP
+# -----------------------------
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 80
@@ -41,9 +52,11 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Optional: HTTPS listener if ACM certificate provided
+# -----------------------------
+# Optional HTTPS Listener (if ACM cert provided)
+# -----------------------------
 resource "aws_lb_listener" "https" {
-  count = var.acm_cert_arn != "" ? 1 : 0
+  count             = var.acm_cert_arn != "" ? 1 : 0
   load_balancer_arn = aws_lb.alb.arn
   port              = 443
   protocol          = "HTTPS"
@@ -55,7 +68,9 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+# -----------------------------
 # Auto Scaling Group
+# -----------------------------
 resource "aws_autoscaling_group" "asg" {
   name                      = "${var.project}-asg"
   desired_capacity          = var.desired_capacity
@@ -83,7 +98,9 @@ resource "aws_autoscaling_group" "asg" {
   }
 }
 
+# -----------------------------
 # Target-tracking scaling policy (ASG avg CPU)
+# -----------------------------
 resource "aws_autoscaling_policy" "cpu_target" {
   name                   = "${var.project}-cpu-target"
   policy_type            = "TargetTrackingScaling"
@@ -94,6 +111,20 @@ resource "aws_autoscaling_policy" "cpu_target" {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
     target_value = 50.0
-    estimated_instance_warmup = 300
   }
 }
+
+# -----------------------------
+# NAT Gateway EIP
+# -----------------------------
+resource "aws_eip" "nat" {
+  depends_on = [aws_internet_gateway.igw]
+}
+
+# -----------------------------
+# Internet Gateway
+# -----------------------------
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.this.id
+}
+
