@@ -3,7 +3,7 @@ set -e
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Update
+# Update and upgrade
 apt-get update -y
 apt-get upgrade -y
 
@@ -12,13 +12,13 @@ apt-get install -y nginx
 systemctl enable nginx
 systemctl start nginx
 
-# Download and install CloudWatch Agent (Ubuntu)
+# Install CloudWatch agent
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb -O /tmp/amazon-cloudwatch-agent.deb
 dpkg -i /tmp/amazon-cloudwatch-agent.deb || true
 apt-get -f install -y || true
 
-# CloudWatch Agent config
-cat << 'EOF' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
+# CloudWatch agent config
+cat <<'EOF' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
 {
   "agent": {
     "metrics_collection_interval": 60,
@@ -53,5 +53,5 @@ cat << 'EOF' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
 }
 EOF
 
-# Start agent
+# Start CloudWatch agent
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s || true
