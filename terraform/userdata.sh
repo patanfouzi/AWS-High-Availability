@@ -18,7 +18,7 @@ dpkg -i /tmp/amazon-cloudwatch-agent.deb || true
 apt-get -f install -y || true
 
 # CloudWatch Agent config
-cat <<'JSON' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
+cat << 'EOF' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
 {
   "agent": {
     "metrics_collection_interval": 60,
@@ -51,7 +51,7 @@ cat <<'JSON' > /opt/aws/amazon-cloudwatch-agent/bin/config.json
     }
   }
 }
-JSON
+EOF
 
 # Start agent
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s || true
