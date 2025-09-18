@@ -6,7 +6,7 @@
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   user_data = filebase64("${path.module}/userdata.sh")
   iam_instance_profile {
-    name = aws_iam_instance_profile.ec2_profile.name
+    arn = aws_iam_instance_profile.ec2_profile.arn
   }
 
   tag_specifications {
