@@ -72,7 +72,7 @@ resource "aws_lb_listener" "https" {
 # Auto Scaling Group
 # -----------------------------
 resource "aws_autoscaling_group" "asg" {
-  name                = "${var.project}-asg"
+  name                = "myapp-asg"
   desired_capacity    = var.desired_capacity
   min_size            = var.min_size
   max_size            = var.max_size
@@ -89,7 +89,7 @@ resource "aws_autoscaling_group" "asg" {
 
   tag {
     key                 = "Name"
-    value               = "${var.project}-instance"
+    value               = "myapp-instance"
     propagate_at_launch = true
   }
 
