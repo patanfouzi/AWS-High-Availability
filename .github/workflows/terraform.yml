@@ -24,12 +24,12 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform init
+        run: terraform init -upgrade
 
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
@@ -37,7 +37,13 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform destroy -auto-approve 
+        # run: terraform state show aws_launch_template.app_lt
+        run: terraform destroy -auto-approve
+        env:
+          TF_VAR_key_name: ${{ secrets.KEY_NAME }}
+        # run: rm -rf .terraform 
+        # run: aws ec2 run-instances --launch-template LaunchTemplateId=lt-0b20f6f46eef078c2,Version=$Default --dry-run
+
 
       - name: Success Message
         if: success()
