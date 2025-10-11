@@ -82,7 +82,7 @@ resource "aws_autoscaling_group" "asg" {
 
   launch_template {
     id      = aws_launch_template.app_lt.id
-    version = "$Latest"
+    version = "$Default"
   }
 
   target_group_arns = [aws_lb_target_group.tg.arn]
@@ -102,7 +102,7 @@ resource "aws_autoscaling_group" "asg" {
 # Target Tracking Policy
 # -----------------------------
 resource "aws_autoscaling_policy" "cpu_target" {
-  name                   = "${var.project}-cpu-target"
+  name                   = "${var.project}-target"
   policy_type            = "TargetTrackingScaling"
   autoscaling_group_name = aws_autoscaling_group.asg.name
 
