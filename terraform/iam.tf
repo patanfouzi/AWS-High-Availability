@@ -17,10 +17,28 @@ data "aws_iam_policy_document" "ec2_assume_role" {
     actions = ["sts:AssumeRole"]
     principals {
       type = "Service"
-      identifiers = ["ec2.amazonaws.com"] 
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
 }
+
+
+resource "aws_iam_policy" "passrole_policy" {
+  name = "${var.project}-passrole-permission"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["iam:PassRole"]
+      Resource = aws_iam_role.ec2_role.arn
+    }]
+  })
+}
+resource "aws_iam_policy_attachment" "passrole_attach" {
+  name       = "${var.project}-passrole-attach"
+  roles      = [aws_iam_role.ec2_role.name]
+  policy_arn = aws_iam_policy.passrole_policy.arn
+  }
 
 # -----------------------------
 # EC2 Role
@@ -28,8 +46,8 @@ data "aws_iam_policy_document" "ec2_assume_role" {
 resource "aws_iam_role" "ec2_role" {
   name = "${var.project}-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
-  tags = { 
-    Name = "${var.project}-ec2-role" 
+  tags = {
+    Name = "${var.project}-ec2-role"
   }
 }
 
