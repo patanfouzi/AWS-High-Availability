@@ -4,11 +4,7 @@ variable "aws_region" {
 }
 variable "project" {
   type = string
-  default = "app-prod" 
-}
-variable "owner"  { 
-  type = string
-  default = "devops"
+  default = "app" 
 }
 
 # Existing instance to create AMI from
@@ -38,7 +34,7 @@ variable "private_subnet_cidrs" {
 
 variable "instance_type" { 
   type = string
-  default = "t3.small" 
+  default = "t2.micro" 
 }
 variable "key_name" { 
   type = string
