@@ -2,11 +2,11 @@
 aws_region = "us-east-1"
 
 # Project metadata (used for tagging)
-project = "myapp-prod"
-owner   = "devops-team"
+project = "app"
+
 
 # Existing instance (to create AMI from)
-source_instance_id = "i-08e862327bb75aa71"
+source_instance_id = "i-04281b2b0c7157b46"
 
 # Networking
 vpc_cidr             = "10.10.0.0/16"
@@ -25,5 +25,5 @@ desired_capacity = 2
 max_size         = 5
 
 # Monitoring / Notifications
-alert_email  = "mehziya0352@gmail.com" # leave empty "" if not using SNS
+alert_email  = "patanfouzi07@gmail.com" # leave empty "" if not using SNS
 acm_cert_arn = "" # optional, only if you want HTTPS on ALB
