@@ -6,7 +6,7 @@ project = "app"
 
 
 # Existing instance (to create AMI from)
-source_instance_id = "i-04281b2b0c7157b46"
+source_instance_id = "i-086fa1ad5b4b2f65d"
 
 # Networking
 vpc_cidr             = "10.10.0.0/16"
