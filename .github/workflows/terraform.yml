@@ -27,6 +27,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: us-east-1
 
+      # Run script to create S3 + DynamoDB backend
+      - name: Setup Backend (S3 + DynamoDB)
+        run: |
+          sudo chmod +x ./create-backend.sh
+          ./create-backend.sh
+        
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: terraform init -upgrade
