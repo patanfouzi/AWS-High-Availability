@@ -2,7 +2,7 @@
 This repository contains scripts and Terraform configurations to set up a highly available, auto-scaling, and resilient infrastructure on AWS. The setup includes an Application Load Balancer (ALB), Auto Scaling Group (ASG), secure networking, monitoring, and backend state management for Terraform.
 
 ---
-# Project Overview
+# 📖 Project Overview
 High Availability & Auto-Scaling: Uses AWS ALB, ASG with targeted scaling policies, and multiple subnets across availability zones.
 
 State Management: Automates creation of S3 bucket and DynamoDB table as a backend for Terraform, facilitating remote state locking and consistency.
